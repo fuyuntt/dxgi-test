@@ -146,16 +146,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CommonTypes.h" />
+    <ClInclude Include="Common.h" />
     <ClInclude Include="DuplicationManager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Common.cpp" />
-    <ClCompile Include="DuplicationManager.cpp" />
-    <ClCompile Include="dxgiTest.cpp" />
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="Common.cc" />
+    <ClCompile Include="DuplicationManager.cc" />
+    <ClCompile Include="dxgiTest.cc" />
+    <ClCompile Include="stdafx.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "CommonTypes.h"
+#include "Common.h"
 
 // Below are lists of errors expect from Dxgi API calls when a transition event like mode change, PnpStop, PnpStart
 // desktop switch, TDR or session disconnect/reconnect. In all these cases we want the application to clean up the threads that process

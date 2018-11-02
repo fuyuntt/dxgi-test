@@ -4,33 +4,33 @@
 //
 // Constructor sets up references / variables
 //
-DUPLICATIONMANAGER::DUPLICATIONMANAGER() : m_DeskDupl(nullptr),
-m_OutputNumber(0),
-m_Device(nullptr)
+DuplicationManager::DuplicationManager() : desk_dupl_(nullptr),
+output_number_(0),
+d3d_device_(nullptr)
 {
-	RtlZeroMemory(&m_OutputDesc, sizeof(m_OutputDesc));
+	RtlZeroMemory(&output_desc_, sizeof(output_desc_));
 }
 
 //
 // Destructor simply calls CleanRefs to destroy everything
 //
-DUPLICATIONMANAGER::~DUPLICATIONMANAGER()
+DuplicationManager::~DuplicationManager()
 {
-	if (m_DeskDupl)
+	if (desk_dupl_)
 	{
-		RELEASE(m_DeskDupl);
+		RELEASE(desk_dupl_);
 	}
 
-	if (m_Device)
+	if (d3d_device_)
 	{
-		RELEASE(m_Device);
+		RELEASE(d3d_device_);
 	}
 }
 
 //
 // Initialize duplication interfaces
 //
-DUPL_RETURN DUPLICATIONMANAGER::InitDupl(UINT Output)
+DUPL_RETURN DuplicationManager::InitDupl(UINT Output)
 {
 	D3D11CreateDevice(
 		NULL,
@@ -40,15 +40,15 @@ DUPL_RETURN DUPLICATIONMANAGER::InitDupl(UINT Output)
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,
-		&m_Device,
+		&d3d_device_,
 		NULL,
-		&m_Context);
-	m_OutputNumber = Output;
-	m_Device->AddRef();
+		&d3d_device_context_);
+	output_number_ = Output;
+	d3d_device_->AddRef();
 
 	// Get DXGI device
 	IDXGIDevice* DxgiDevice = nullptr;
-	HRESULT hr = m_Device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&DxgiDevice));
+	HRESULT hr = d3d_device_->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&DxgiDevice));
 	if (FAILED(hr))
 	{
 		return ProcessFailure(nullptr, L"Failed to QI for DXGI Device", L"Error", hr);
@@ -60,7 +60,7 @@ DUPL_RETURN DUPLICATIONMANAGER::InitDupl(UINT Output)
 	RELEASE(DxgiDevice);
 	if (FAILED(hr))
 	{
-		return ProcessFailure(m_Device, L"Failed to get parent DXGI Adapter", L"Error", hr, SystemTransitionsExpectedErrors);
+		return ProcessFailure(d3d_device_, L"Failed to get parent DXGI Adapter", L"Error", hr, SystemTransitionsExpectedErrors);
 	}
 
 	// Get output
@@ -69,10 +69,10 @@ DUPL_RETURN DUPLICATIONMANAGER::InitDupl(UINT Output)
 	RELEASE(DxgiAdapter);
 	if (FAILED(hr))
 	{
-		return ProcessFailure(m_Device, L"Failed to get specified output in DUPLICATIONMANAGER", L"Error", hr, EnumOutputsExpectedErrors);
+		return ProcessFailure(d3d_device_, L"Failed to get specified output in DUPLICATIONMANAGER", L"Error", hr, EnumOutputsExpectedErrors);
 	}
 
-	DxgiOutput->GetDesc(&m_OutputDesc);
+	DxgiOutput->GetDesc(&output_desc_);
 
 	// QI for Output 1
 	IDXGIOutput1* DxgiOutput1 = nullptr;
@@ -84,7 +84,7 @@ DUPL_RETURN DUPLICATIONMANAGER::InitDupl(UINT Output)
 	}
 
 	// Create desktop duplication
-	hr = DxgiOutput1->DuplicateOutput(m_Device, &m_DeskDupl);
+	hr = DxgiOutput1->DuplicateOutput(d3d_device_, &desk_dupl_);
 	RELEASE(DxgiOutput1);
 	if (FAILED(hr))
 	{
@@ -93,7 +93,7 @@ DUPL_RETURN DUPLICATIONMANAGER::InitDupl(UINT Output)
 			MessageBoxW(nullptr, L"There is already the maximum number of applications using the Desktop Duplication API running, please close one of those applications and then try again.", L"Error", MB_OK);
 			return DUPL_RETURN_ERROR_UNEXPECTED;
 		}
-		return ProcessFailure(m_Device, L"Failed to get duplicate output in DUPLICATIONMANAGER", L"Error", hr, CreateDuplicationExpectedErrors);
+		return ProcessFailure(d3d_device_, L"Failed to get duplicate output in DUPLICATIONMANAGER", L"Error", hr, CreateDuplicationExpectedErrors);
 	}
 	return DUPL_RETURN_SUCCESS;
 }
@@ -102,13 +102,13 @@ DUPL_RETURN DUPLICATIONMANAGER::InitDupl(UINT Output)
 // Get next frame and write it into Data
 //
 _Success_(*Timeout == false && return == DUPL_RETURN_SUCCESS)
-DUPL_RETURN DUPLICATIONMANAGER::GetFrame(_Out_ FRAME_DATA* FrameData, _Out_ bool* Timeout)
+DUPL_RETURN DuplicationManager::GetFrame(_Out_ FRAME_DATA* FrameData, _Out_ bool* Timeout)
 {
 	IDXGIResource* DesktopResource = nullptr;
 	DXGI_OUTDUPL_FRAME_INFO FrameInfo;
 
 	// Get new frame
-	HRESULT hr = m_DeskDupl->AcquireNextFrame(500, &FrameInfo, &DesktopResource);
+	HRESULT hr = desk_dupl_->AcquireNextFrame(500, &FrameInfo, &DesktopResource);
 	if (hr == DXGI_ERROR_WAIT_TIMEOUT)
 	{
 		*Timeout = true;
@@ -118,7 +118,7 @@ DUPL_RETURN DUPLICATIONMANAGER::GetFrame(_Out_ FRAME_DATA* FrameData, _Out_ bool
 
 	if (FAILED(hr))
 	{
-		return ProcessFailure(m_Device, L"Failed to acquire next frame in DUPLICATIONMANAGER", L"Error", hr, FrameInfoExpectedErrors);
+		return ProcessFailure(d3d_device_, L"Failed to acquire next frame in DUPLICATIONMANAGER", L"Error", hr, FrameInfoExpectedErrors);
 	}
 	//
 	// query next frame staging buffer
@@ -149,7 +149,7 @@ DUPL_RETURN DUPLICATIONMANAGER::GetFrame(_Out_ FRAME_DATA* FrameData, _Out_ bool
 	frameDescriptor.MipLevels = 1;
 	frameDescriptor.ArraySize = 1;
 	frameDescriptor.SampleDesc.Count = 1;
-	hr = m_Device->CreateTexture2D(&frameDescriptor, NULL, &hNewDesktopImage);
+	hr = d3d_device_->CreateTexture2D(&frameDescriptor, NULL, &hNewDesktopImage);
 	if (FAILED(hr))
 	{
 		return ProcessFailure(nullptr, L"创建cpu可访问材质异常", L"Error", hr);
@@ -158,9 +158,9 @@ DUPL_RETURN DUPLICATIONMANAGER::GetFrame(_Out_ FRAME_DATA* FrameData, _Out_ bool
 	//
 	// copy next staging buffer to new staging buffer
 	//
-	m_Context->CopyResource(hNewDesktopImage, hAcquiredDesktopImage);
+	d3d_device_context_->CopyResource(hNewDesktopImage, hAcquiredDesktopImage);
 	RELEASE(hAcquiredDesktopImage);
-	m_DeskDupl->ReleaseFrame();
+	desk_dupl_->ReleaseFrame();
 	//
 	// create staging buffer for map bits
 	//
@@ -187,19 +187,19 @@ DUPL_RETURN DUPLICATIONMANAGER::GetFrame(_Out_ FRAME_DATA* FrameData, _Out_ bool
 	return DUPL_RETURN_SUCCESS;
 }
 
-void DUPLICATIONMANAGER::ReleaseDupl()
+void DuplicationManager::ReleaseDupl()
 {
 	// close and release all existing COM objects
-	m_Device->Release();
-	m_Context->Release();
+	d3d_device_->Release();
+	d3d_device_context_->Release();
 }
 
 //
 // Gets output desc into DescPtr
 //
-void DUPLICATIONMANAGER::GetOutputDesc(_Out_ DXGI_OUTPUT_DESC* DescPtr)
+void DuplicationManager::GetOutputDesc(_Out_ DXGI_OUTPUT_DESC* DescPtr)
 {
-	*DescPtr = m_OutputDesc;
+	*DescPtr = output_desc_;
 }
 
 

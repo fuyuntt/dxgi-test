@@ -27,21 +27,21 @@
     <ClInclude Include="DuplicationManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="CommonTypes.h">
+    <ClInclude Include="Common.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="DuplicationManager.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="dxgiTest.cpp">
+    <ClCompile Include="Common.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="DuplicationManager.cpp">
+    <ClCompile Include="dxgiTest.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Common.cpp">
+    <ClCompile Include="stdafx.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

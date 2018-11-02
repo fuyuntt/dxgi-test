@@ -7,7 +7,7 @@
 
 int main()
 {
-	DUPLICATIONMANAGER* pMgr = new DUPLICATIONMANAGER();
+	DuplicationManager* pMgr = new DuplicationManager();
 	DUPL_RETURN hr;
 	hr = pMgr->InitDupl(0);
 	if (hr != DUPL_RETURN_SUCCESS)
