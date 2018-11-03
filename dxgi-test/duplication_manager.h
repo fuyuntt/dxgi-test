@@ -13,7 +13,7 @@
 //
 struct FrameData
 {
-	const BYTE* buffer;
+	BYTE* buffer;
 	int height;
 	int width;
 };

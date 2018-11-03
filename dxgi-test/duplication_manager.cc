@@ -224,8 +224,11 @@ DuplReturn DuplicationManager::GetFrame(_In_ int timeout, _Out_ FrameData* frame
 
 void DuplicationManager::DoneWithFrame()
 {
-	staging_surf_->Unmap();
-	RELEASE(staging_surf_);
+	if (staging_surf_ != NULL)
+	{
+		staging_surf_->Unmap();
+		RELEASE(staging_surf_);
+	}
 }
 
 void DuplicationManager::ReleaseDupl()

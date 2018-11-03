@@ -30,6 +30,21 @@
     <ClInclude Include="common.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="png.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="zconf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="zlib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pnglibconf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pngconf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cc">
@@ -44,5 +59,13 @@
     <ClCompile Include="dxgi_test.cc">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libpng16.lib">
+      <Filter>资源文件</Filter>
+    </Library>
+    <Library Include="zlib.lib">
+      <Filter>资源文件</Filter>
+    </Library>
   </ItemGroup>
 </Project>

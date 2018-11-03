@@ -29,9 +29,12 @@ int main()
 			return 2;
 		}
 		count++;
-		if (is_timeout)
+		if (!is_timeout)
 		{
-			continue;
+			char path[30];
+			sprintf_s(path, "d:\\temp\\test-%d.png", count);
+			WritePng(frame_data.buffer, frame_data.width, frame_data.height, path);
+			Sleep(2000);
 		}
 		duplication_manager->DoneWithFrame();
 	}
