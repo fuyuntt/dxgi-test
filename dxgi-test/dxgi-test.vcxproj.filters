@@ -24,24 +24,24 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="DuplicationManager.h">
+    <ClInclude Include="duplication_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Common.h">
+    <ClInclude Include="common.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DuplicationManager.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Common.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="dxgiTest.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="duplication_manager.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="dxgi_test.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

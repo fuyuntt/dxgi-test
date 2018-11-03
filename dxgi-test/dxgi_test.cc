@@ -2,27 +2,27 @@
 //
 
 #include "stdafx.h"
-#include "DuplicationManager.h"
+#include "duplication_manager.h"
 #include "time.h"
 
 int main()
 {
 	DuplicationManager* pMgr = new DuplicationManager();
-	DUPL_RETURN hr;
+	DuplReturn hr;
 	hr = pMgr->InitDupl(0);
 	if (hr != DUPL_RETURN_SUCCESS)
 	{
 		DisplayMsg(L"初始化失败", L"MSG", 0);
 		return 1;
 	}
-	bool timeOut;
-	FRAME_DATA FrameData;
+	bool is_timeout;
+	FrameData FrameData;
 	time_t startSec = time(NULL);
 	time_t endSec = startSec + 20;
 	int count = 0;
 	while (time(NULL) < endSec)
 	{
-		hr = pMgr->GetFrame(&FrameData, &timeOut);
+		hr = pMgr->GetFrame(10, &FrameData, &is_timeout);
 		if (hr != DUPL_RETURN_SUCCESS)
 		{
 			DisplayMsg(L"获取数据失败", L"MSG", 0);
