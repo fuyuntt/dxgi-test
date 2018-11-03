@@ -63,7 +63,7 @@ DuplicationManager::~DuplicationManager()
 //
 // Initialize duplication interfaces
 //
-DuplReturn DuplicationManager::InitDupl(UINT output)
+DuplReturn DuplicationManager::Init(UINT output)
 {
 	D3D11CreateDevice(
 		NULL,

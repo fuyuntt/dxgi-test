@@ -7,22 +7,22 @@
 
 int main()
 {
-	DuplicationManager* pMgr = new DuplicationManager();
+	DuplicationManager* duplication_manager = new DuplicationManager();
 	DuplReturn hr;
-	hr = pMgr->InitDupl(0);
+	hr = duplication_manager->Init(0);
 	if (hr != DUPL_RETURN_SUCCESS)
 	{
 		DisplayMsg(L"初始化失败", L"MSG", 0);
 		return 1;
 	}
 	bool is_timeout;
-	FrameData FrameData;
-	time_t startSec = time(NULL);
-	time_t endSec = startSec + 20;
+	FrameData frame_data;
+	time_t start_sec = time(NULL);
+	time_t end_sec = start_sec + 20;
 	int count = 0;
-	while (time(NULL) < endSec)
+	while (time(NULL) < end_sec)
 	{
-		hr = pMgr->GetFrame(10, &FrameData, &is_timeout);
+		hr = duplication_manager->GetFrame(10, &frame_data, &is_timeout);
 		if (hr != DUPL_RETURN_SUCCESS)
 		{
 			DisplayMsg(L"获取数据失败", L"MSG", 0);
