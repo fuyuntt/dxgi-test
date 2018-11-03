@@ -29,6 +29,11 @@ int main()
 			return 2;
 		}
 		count++;
+		if (is_timeout)
+		{
+			continue;
+		}
+		duplication_manager->DoneWithFrame();
 	}
 	wchar_t msg[100];
 	swprintf_s(msg, L"创建截图%d个, 大约%d个每秒", count, count / 20);

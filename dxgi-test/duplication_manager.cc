@@ -39,7 +39,7 @@ HRESULT EnumOutputsExpectedErrors[] = {
 //
 // Constructor sets up references / variables
 //
-DuplicationManager::DuplicationManager() : desk_dupl_(nullptr), output_number_(0), d3d_device_(nullptr)
+DuplicationManager::DuplicationManager() : desk_dupl_(nullptr), output_number_(0), d3d_device_(nullptr), d3d_device_context_(nullptr), staging_surf_(nullptr)
 {
 	RtlZeroMemory(&output_desc_, sizeof(output_desc_));
 }
@@ -135,6 +135,11 @@ DuplReturn DuplicationManager::Init(UINT output)
 //
 DuplReturn DuplicationManager::GetFrame(_In_ int timeout, _Out_ FrameData* frame_data, _Out_ bool* is_timeout)
 {
+	if (staging_surf_ != nullptr)
+	{
+		DisplayMsg(L"请先释放上次获取的画面", L"message", 0);
+		return DUPL_RETURN_ERROR_EXPECTED;
+	}
 	IDXGIResource* desktop_resource = nullptr;
 	DXGI_OUTDUPL_FRAME_INFO frame_info;
 
@@ -195,8 +200,7 @@ DuplReturn DuplicationManager::GetFrame(_In_ int timeout, _Out_ FrameData* frame
 	//
 	// create staging buffer for map bits
 	//
-	IDXGISurface *staging_surf = NULL;
-	new_desktop_image->QueryInterface(__uuidof(IDXGISurface), (void **)(&staging_surf));
+	new_desktop_image->QueryInterface(__uuidof(IDXGISurface), (void **)(&staging_surf_));
 	RELEASE(new_desktop_image);
 	if (FAILED(hr))
 	{
@@ -206,16 +210,22 @@ DuplReturn DuplicationManager::GetFrame(_In_ int timeout, _Out_ FrameData* frame
 	// copy bits to user space
 	//
 	DXGI_MAPPED_RECT mapped_rect;
-	hr = staging_surf->Map(&mapped_rect, DXGI_MAP_READ);
-	if (SUCCEEDED(hr))
+	hr = staging_surf_->Map(&mapped_rect, DXGI_MAP_READ);
+	if (FAILED(hr))
 	{
-		frame_data->buffer = mapped_rect.pBits;
-		frame_data->width = frame_descriptor.Width;
-		frame_data->height = frame_descriptor.Height;
-		staging_surf->Unmap();
+		RELEASE(staging_surf_);
+		return ProcessFailure(nullptr, L"map staging_surf 失败", L"失败", hr);
 	}
-	RELEASE(staging_surf);
+	frame_data->buffer = mapped_rect.pBits;
+	frame_data->width = frame_descriptor.Width;
+	frame_data->height = frame_descriptor.Height;
 	return DUPL_RETURN_SUCCESS;
+}
+
+void DuplicationManager::DoneWithFrame()
+{
+	staging_surf_->Unmap();
+	RELEASE(staging_surf_);
 }
 
 void DuplicationManager::ReleaseDupl()

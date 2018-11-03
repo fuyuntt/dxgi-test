@@ -9,6 +9,7 @@
 #define RELEASE(lpUnk) do {if ((lpUnk) != NULL) { (lpUnk)->Release(); (lpUnk) = nullptr;}} while (0)
 //
 // FRAME_DATA holds information about an acquired frame
+// Ã¿¸öÏñËØ4 byte
 //
 struct FrameData
 {
@@ -35,6 +36,7 @@ public:
 	DuplicationManager();
 	~DuplicationManager();
 	DuplReturn GetFrame(_In_ int timeout, _Out_ FrameData* frame_data, _Out_ bool* is_timeout);
+	void DoneWithFrame();
 	DuplReturn Init(UINT output);
 	void ReleaseDupl();
 	void GetOutputDesc(_Out_ DXGI_OUTPUT_DESC* output_desc);
@@ -45,6 +47,8 @@ private:
 	DXGI_OUTDUPL_DESC dupl_desc_;
 	UINT output_number_;
 	DXGI_OUTPUT_DESC output_desc_;
+	IDXGISurface *staging_surf_;
+
 	ID3D11Device* d3d_device_;
 	ID3D11DeviceContext* d3d_device_context_;
 };
