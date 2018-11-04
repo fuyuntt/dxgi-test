@@ -231,13 +231,6 @@ void DuplicationManager::DoneWithFrame()
 	}
 }
 
-void DuplicationManager::ReleaseDupl()
-{
-	// close and release all existing COM objects
-	d3d_device_->Release();
-	d3d_device_context_->Release();
-}
-
 //
 // Gets output desc into DescPtr
 //

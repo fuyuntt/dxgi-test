@@ -5,11 +5,13 @@
 #include "duplication_manager.h"
 #include "time.h"
 
+#define OUTPUT 0
+
 int main()
 {
 	DuplicationManager* duplication_manager = new DuplicationManager();
 	DuplReturn hr;
-	hr = duplication_manager->Init(0);
+	hr = duplication_manager->Init(OUTPUT);
 	if (hr != DUPL_RETURN_SUCCESS)
 	{
 		DisplayMsg(L"初始化失败", L"MSG", 0);
@@ -18,14 +20,41 @@ int main()
 	bool is_timeout;
 	FrameData frame_data;
 	time_t start_sec = time(NULL);
-	time_t end_sec = start_sec + 20;
+	time_t end_sec = start_sec + 360;
 	int count = 0;
 	while (time(NULL) < end_sec)
 	{
 		hr = duplication_manager->GetFrame(10, &frame_data, &is_timeout);
-		if (hr != DUPL_RETURN_SUCCESS)
+		if (hr == DUPL_RETURN_ERROR_EXPECTED)
 		{
-			DisplayMsg(L"获取数据失败", L"MSG", 0);
+			printf("系统处于瞬态，开始重新初始化\n");
+			duplication_manager->DoneWithFrame();
+			delete duplication_manager;
+			int try_count = 1;
+			while (hr != DUPL_RETURN_SUCCESS && try_count <= 3)
+			{
+				printf("开始第%d次初始化\n", try_count);
+				duplication_manager = new DuplicationManager();
+				hr = duplication_manager->Init(OUTPUT);
+				if (hr != DUPL_RETURN_SUCCESS)
+				{
+					delete duplication_manager;
+					printf("第%d次初始化失败, 重试中\n", try_count);
+				}
+				try_count++;
+				Sleep(1);
+			}
+			if (hr != DUPL_RETURN_SUCCESS)
+			{
+				printf("初始化失败\n");
+				return 1;
+			}
+			printf("初始化成功\n");
+			continue;
+		}
+		else if (hr == DUPL_RETURN_ERROR_UNEXPECTED)
+		{
+			DisplayMsg(L"获取数据失败-意外失败", L"MSG", 0);
 			return 2;
 		}
 		count++;

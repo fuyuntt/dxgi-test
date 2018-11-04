@@ -38,7 +38,6 @@ public:
 	DuplReturn GetFrame(_In_ int timeout, _Out_ FrameData* frame_data, _Out_ bool* is_timeout);
 	void DoneWithFrame();
 	DuplReturn Init(UINT output);
-	void ReleaseDupl();
 	void GetOutputDesc(_Out_ DXGI_OUTPUT_DESC* output_desc);
 
 private:
