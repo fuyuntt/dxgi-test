@@ -30,22 +30,11 @@ int main()
 			printf("系统处于瞬态，开始重新初始化\n");
 			duplication_manager->DoneWithFrame();
 			delete duplication_manager;
-			int try_count = 1;
-			while (hr != DUPL_RETURN_SUCCESS && try_count <= 3)
-			{
-				printf("开始第%d次初始化\n", try_count);
-				duplication_manager = new DuplicationManager();
-				hr = duplication_manager->Init(OUTPUT);
-				if (hr != DUPL_RETURN_SUCCESS)
-				{
-					delete duplication_manager;
-					printf("第%d次初始化失败, 重试中\n", try_count);
-				}
-				try_count++;
-				Sleep(1);
-			}
+			duplication_manager = new DuplicationManager();
+			hr = duplication_manager->Init(OUTPUT);
 			if (hr != DUPL_RETURN_SUCCESS)
 			{
+				delete duplication_manager;
 				printf("初始化失败\n");
 				return 1;
 			}
