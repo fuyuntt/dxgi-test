@@ -27,9 +27,6 @@
     <ClInclude Include="duplication_manager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="png.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -45,18 +42,33 @@
     <ClInclude Include="pngconf.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="png_writer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="logger.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="message.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="common.cc">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="duplication_manager.cc">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="dxgi_test.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="png_writer.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="logger.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="message.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
