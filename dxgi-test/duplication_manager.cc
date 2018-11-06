@@ -68,7 +68,7 @@ namespace dupl
 	//
 	// Initialize duplication interfaces
 	//
-	DuplReturn DuplicationManager::Init(UINT output)
+	ReturnStatus DuplicationManager::Init(UINT output)
 	{
 		D3D11CreateDevice(
 			NULL,
@@ -128,22 +128,22 @@ namespace dupl
 			if (hr == DXGI_ERROR_NOT_CURRENTLY_AVAILABLE)
 			{
 				msg::ShowMsg(L"There is already the maximum number of applications using the Desktop Duplication API running, please close one of those applications and then try again.");
-				return DUPL_RETURN_ERROR_UNEXPECTED;
+				return ERROR_UNEXPECTED;
 			}
 			return ProcessFailure(d3d_device_, L"Failed to get duplicate output in DUPLICATIONMANAGER", hr, CreateDuplicationExpectedErrors);
 		}
-		return DUPL_RETURN_SUCCESS;
+		return SUCCESS;
 	}
 
 	//
 	// Get next frame and write it into Data
 	//
-	DuplReturn DuplicationManager::GetFrame(_In_ int timeout, _Out_ FrameData* frame_data, _Out_ bool* is_timeout)
+	ReturnStatus DuplicationManager::GetFrame(_In_ int timeout, _Out_ FrameData* frame_data, _Out_ bool* is_timeout)
 	{
 		if (staging_surf_ != nullptr)
 		{
 			logger::error("请先释放之前的画面");
-			return DUPL_RETURN_ERROR_UNEXPECTED;
+			return ERROR_UNEXPECTED;
 		}
 		IDXGIResource* desktop_resource = nullptr;
 		DXGI_OUTDUPL_FRAME_INFO frame_info;
@@ -153,7 +153,7 @@ namespace dupl
 		if (hr == DXGI_ERROR_WAIT_TIMEOUT)
 		{
 			*is_timeout = true;
-			return DUPL_RETURN_SUCCESS;
+			return SUCCESS;
 		}
 		*is_timeout = false;
 
@@ -224,7 +224,7 @@ namespace dupl
 		frame_data->buffer = mapped_rect.pBits;
 		frame_data->width = frame_descriptor.Width;
 		frame_data->height = frame_descriptor.Height;
-		return DUPL_RETURN_SUCCESS;
+		return SUCCESS;
 	}
 
 	void DuplicationManager::DoneWithFrame()
@@ -244,7 +244,7 @@ namespace dupl
 		*output_desc = output_desc_;
 	}
 
-	DuplReturn ProcessFailure(_In_opt_ ID3D11Device* device, _In_ LPCWSTR str, HRESULT hr, _In_ HRESULT* expected_errors)
+	ReturnStatus ProcessFailure(_In_opt_ ID3D11Device* device, _In_ LPCWSTR str, HRESULT hr, _In_ HRESULT* expected_errors)
 	{
 		HRESULT translated_hr;
 
@@ -293,7 +293,7 @@ namespace dupl
 			{
 				if (*(current_result++) == translated_hr)
 				{
-					return DUPL_RETURN_ERROR_EXPECTED;
+					return ERROR_EXPECTED;
 				}
 			}
 		}
@@ -301,6 +301,6 @@ namespace dupl
 		// Error was not expected so display the message box
 		msg::ShowFailure(str, translated_hr);
 
-		return DUPL_RETURN_ERROR_UNEXPECTED;
+		return ERROR_UNEXPECTED;
 	}
 }

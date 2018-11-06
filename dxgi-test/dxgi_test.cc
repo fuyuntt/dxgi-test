@@ -14,9 +14,9 @@ int main()
 {
 	logger::info("开始程序");
 	dupl::DuplicationManager* duplication_manager = new dupl::DuplicationManager();
-	dupl::DuplReturn hr;
+	ReturnStatus hr;
 	hr = duplication_manager->Init(OUTPUT);
-	if (hr != dupl::DUPL_RETURN_SUCCESS)
+	if (hr != SUCCESS)
 	{
 		logger::error("初始化失败");
 		msg::ShowMsg(L"桌面复制程序初始化失败");
@@ -30,14 +30,14 @@ int main()
 	while (time(NULL) < end_sec)
 	{
 		hr = duplication_manager->GetFrame(10, &frame_data, &is_timeout);
-		if (hr == dupl::DUPL_RETURN_ERROR_EXPECTED)
+		if (hr == ERROR_EXPECTED)
 		{
 			logger::info("系统处于瞬态，开始重新初始化");
 			duplication_manager->DoneWithFrame();
 			delete duplication_manager;
 			duplication_manager = new dupl::DuplicationManager();
 			hr = duplication_manager->Init(OUTPUT);
-			if (hr != dupl::DUPL_RETURN_SUCCESS)
+			if (hr != SUCCESS)
 			{
 				delete duplication_manager;
 				logger::error("重新初始化失败");
@@ -47,7 +47,7 @@ int main()
 			logger::info("初始化成功");
 			continue;
 		}
-		else if (hr == dupl::DUPL_RETURN_ERROR_UNEXPECTED)
+		else if (hr == ERROR_UNEXPECTED)
 		{
 			logger::error("获取数据意外失败");
 			msg::ShowMsg(L"获取数据失败-意外失败");

@@ -3,6 +3,7 @@
 
 #include <d3d11.h>
 #include <dxgi1_2.h>
+#include "common.h"
 
 namespace dupl 
 {
@@ -17,14 +18,8 @@ namespace dupl
 		int width;
 	};
 
-	enum DuplReturn
-	{
-		DUPL_RETURN_SUCCESS = 0,
-		DUPL_RETURN_ERROR_EXPECTED = 1,
-		DUPL_RETURN_ERROR_UNEXPECTED = 2
-	};
 
-	DuplReturn ProcessFailure(_In_ ID3D11Device* device, _In_ LPCWSTR str, HRESULT hr, _In_ HRESULT* expected_errors = nullptr);
+	ReturnStatus ProcessFailure(_In_ ID3D11Device* device, _In_ LPCWSTR str, HRESULT hr, _In_ HRESULT* expected_errors = nullptr);
 
 	//
 	// Handles the task of duplicating an output.
@@ -34,9 +29,9 @@ namespace dupl
 	public:
 		DuplicationManager();
 		~DuplicationManager();
-		DuplReturn GetFrame(_In_ int timeout, _Out_ FrameData* frame_data, _Out_ bool* is_timeout);
+		ReturnStatus GetFrame(_In_ int timeout, _Out_ FrameData* frame_data, _Out_ bool* is_timeout);
 		void DoneWithFrame();
-		DuplReturn Init(UINT output);
+		ReturnStatus Init(UINT output);
 		void GetOutputDesc(_Out_ DXGI_OUTPUT_DESC* output_desc);
 
 	private:

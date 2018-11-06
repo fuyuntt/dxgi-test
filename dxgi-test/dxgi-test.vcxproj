@@ -148,7 +148,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="common.h" />
     <ClInclude Include="duplication_manager.h" />
+    <ClInclude Include="game.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="png.h" />
@@ -163,6 +165,7 @@
   <ItemGroup>
     <ClCompile Include="duplication_manager.cc" />
     <ClCompile Include="dxgi_test.cc" />
+    <ClCompile Include="game.cc" />
     <ClCompile Include="logger.cc" />
     <ClCompile Include="message.cc" />
     <ClCompile Include="png_writer.cc" />

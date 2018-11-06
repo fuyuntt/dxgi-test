@@ -51,6 +51,12 @@
     <ClInclude Include="message.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cc">
@@ -69,6 +75,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="message.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="game.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
