@@ -9,11 +9,18 @@ namespace game {
 
 	Controller::~Controller()
 	{
-		delete dupl_manager;
+		if (dupl_manager != NULL)
+		{
+			delete dupl_manager;
+		}
 	}
 
 	ReturnStatus Controller::Init()
 	{
+		if (dupl_manager != NULL)
+		{
+			delete dupl_manager;
+		}
 		dupl_manager = new dupl::DuplicationManager();
 		logger::info("开始初始化桌面复制");
 		ReturnStatus status = dupl_manager->Init(0);
@@ -66,6 +73,7 @@ namespace game {
 			{
 				(*r_it)->ClearContext(&context);
 			}
+			dupl_manager->DoneWithFrame();
 		}
 	}
 }
