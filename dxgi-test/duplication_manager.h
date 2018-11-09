@@ -7,15 +7,36 @@
 
 namespace dupl 
 {
+	struct COLOR_BGRA
+	{
+		BYTE b;
+		BYTE g;
+		BYTE r;
+		BYTE a;
+		bool operator==(const COLOR_BGRA& bgra) const {
+			return b == bgra.b &&
+				g == bgra.g &&
+				r == bgra.r &&
+				a == bgra.a;
+		}
+	};
 	//
 	// FRAME_DATA holds information about an acquired frame
 	// Ã¿¸öÏñËØ4 byte
 	//
-	struct FrameData
+	class FrameData
 	{
+	public:
 		BYTE* buffer;
 		int height;
 		int width;
+
+		COLOR_BGRA* GetPixel(int x, int y)
+		{
+			return reinterpret_cast<COLOR_BGRA*>(buffer) + y * width + x;
+		}
+
+
 	};
 
 

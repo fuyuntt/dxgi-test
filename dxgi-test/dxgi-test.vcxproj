@@ -152,6 +152,7 @@
     <ClInclude Include="duplication_manager.h" />
     <ClInclude Include="filters.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="kml.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="png.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="duplication_manager.cc" />
     <ClCompile Include="game_main.cc" />
     <ClCompile Include="game.cc" />
+    <ClCompile Include="kml.cc" />
     <ClCompile Include="logger.cc" />
     <ClCompile Include="message.cc" />
     <ClCompile Include="png_writer.cc" />

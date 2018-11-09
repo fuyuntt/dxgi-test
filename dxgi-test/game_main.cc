@@ -8,6 +8,8 @@
 #include "logger.h"
 #include "message.h"
 #include "game.h"
+#include "kml.h"
+#include "filters.h"
 
 int main()
 {
@@ -26,6 +28,7 @@ int main()
 			continue;
 		}
 		logger::info("初始化成功");
+		controller.AddFilter(new game::WeaponFilter());
 		status = controller.StartGaming();
 		if (status == ERROR_EXPECTED)
 		{
@@ -34,4 +37,24 @@ int main()
 	}
 	system("pause");
     return 0;
+}
+int main_bak()
+{
+	logger::info("开始程序");
+	if (!kml::LoadDLL())
+	{
+		goto end;
+	}
+	if (!kml::InitDevice())
+	{
+		goto end;
+	}
+	while (true)
+	{
+		kml::KeyPress(" ", 1);
+		Sleep(1000);
+	}
+end:
+	system("pause");
+	return 0;
 }

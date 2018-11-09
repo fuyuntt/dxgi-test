@@ -4,9 +4,17 @@
 #include "game.h"
 namespace game
 {
+	enum WeaponType {
+		SNIPER,
+		AUTOMATIC_RIFLE
+	};
 	class WeaponFilter : public Filter
 	{
-		void Run(const dupl::FrameData* frameData, Context* context);
+	public:
+		const std::string kWeapon = "weapon";
+		void Run(dupl::FrameData* frame_data, Context* context);
+	private:
+		WeaponType weapon_type_;
 	};
 }
 

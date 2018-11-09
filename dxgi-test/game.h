@@ -6,6 +6,9 @@
 #include "logger.h"
 
 namespace game {
+	bool HasNext(const RECT& rect, const POINT& p);
+	void Next(const RECT& rect, POINT* p);
+	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash);
 	class Context
 	{
 	public:
@@ -28,10 +31,7 @@ namespace game {
 	class Filter
 	{
 	public:
-		virtual void Run(const dupl::FrameData* frameData, Context* context);
-		void ClearContext(Context* context)
-		{
-		}
+		virtual void Run(dupl::FrameData* frame_data, Context* context) = 0;
 	};
 
 	class Controller
@@ -44,8 +44,8 @@ namespace game {
 		ReturnStatus StartGaming();
 
 	private:
-		dupl::DuplicationManager* dupl_manager;
-		std::vector<Filter*> filters;
+		dupl::DuplicationManager* dupl_manager_;
+		std::vector<Filter*> filters_;
 	};
 
 }

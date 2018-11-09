@@ -60,6 +60,9 @@
     <ClInclude Include="filters.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="kml.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cc">
@@ -84,6 +87,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="game_main.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="kml.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
