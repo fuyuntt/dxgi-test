@@ -45,7 +45,7 @@ namespace game
 		return true;
 	}
 
-	bool WeaponFilter::Run(dupl::FrameData* frame_data)
+	bool WeaponFilter::Run(dupl::FrameData* frame_data, Context* context)
 	{
 		if (frame_data == NULL)
 		{
@@ -71,16 +71,18 @@ namespace game
 		std::unordered_map<unsigned, Weapon*>::const_iterator it = weapons.find(hash);
 		if (it == weapons.end())
 		{
-			weapon_type_ = IsSniper(frame_data) ? SNIPER : AUTOMATIC_RIFLE;
+			context->weapon_type = IsSniper(frame_data) ? SNIPER : AUTOMATIC_RIFLE;
 			if (saved_hash.find(hash) == saved_hash.end())
 			{
 				logger::info("找不到该hash的枪,开始使用默认的选项");
 				SaveFrameAsPng(frame_data, hash);
 				saved_hash.insert(std::pair<unsigned, void*>(hash, NULL));
 			}
-			return true;
+		} else {
+			Weapon* weapon = it->second;
+			context->weapon_type = weapon->weapon_type;
+			logger::info("武器切换到[%s]， 类型[%d]", weapon->weapon_name, weapon->weapon_type);
 		}
-		Weapon* weapon = it->second;
-		logger::info("武器切换到[%s]， 类型[%d]", weapon->weapon_name, weapon->weapon_type);
+		return true;
 	}
 }

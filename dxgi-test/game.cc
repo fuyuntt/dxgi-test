@@ -97,7 +97,7 @@ namespace game {
 	ReturnStatus Controller::StartGaming()
 	{
 		dupl::FrameData frame_data;
-
+		Context context;
 		while (true)
 		{
 			bool is_timeout;
@@ -109,7 +109,7 @@ namespace game {
 			std::vector<Filter*>::iterator it;
 			for (it = filters_.begin(); it != filters_.end(); it++)
 			{
-				bool is_continue = (*it)->Run(is_timeout ? NULL : &frame_data);
+				bool is_continue = (*it)->Run(is_timeout ? NULL : &frame_data, &context);
 				if (!is_continue)
 					break;
 			}

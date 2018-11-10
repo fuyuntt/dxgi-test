@@ -3,9 +3,9 @@
 #include "filters.h"
 namespace game
 {
-	bool SniperFilter::Run(dupl::FrameData* frame_data)
+	bool SniperFilter::Run(dupl::FrameData* frame_data, Context* context)
 	{
-		if (WeaponFilter::weapon_type_ != SNIPER)
+		if (context->weapon_type != SNIPER)
 		{
 			return true;
 		}

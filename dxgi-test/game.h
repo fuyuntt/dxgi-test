@@ -11,10 +11,21 @@ namespace game {
 	void Next(const RECT& rect, POINT* p);
 	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash);
 
+	enum WeaponType {
+		SNIPER,
+		AUTOMATIC_RIFLE
+	};
+
+	struct Context
+	{
+		WeaponType weapon_type;
+		bool is_in_range;
+	};
+
 	class Filter
 	{
 	public:
-		virtual bool Run(dupl::FrameData* frame_data) = 0;
+		virtual bool Run(dupl::FrameData* frame_data, Context* context) = 0;
 	};
 
 	class Controller
