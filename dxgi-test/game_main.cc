@@ -29,6 +29,7 @@ int main()
 		}
 		logger::info("初始化成功");
 		controller.AddFilter(new game::WeaponFilter());
+		controller.AddFilter(new game::IsInRangeFilter());
 		status = controller.StartGaming();
 		if (status == ERROR_EXPECTED)
 		{

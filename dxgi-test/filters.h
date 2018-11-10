@@ -11,11 +11,24 @@ namespace game
 	class WeaponFilter : public Filter
 	{
 	public:
-		const std::string kWeapon = "weapon";
-		void Run(dupl::FrameData* frame_data, Context* context);
-	private:
-		WeaponType weapon_type_;
+		static WeaponType weapon_type_;
+		bool Run(dupl::FrameData* frame_data);
 	};
+
+	class IsInRangeFilter : public Filter
+	{
+	public:
+		static bool is_in_range_;
+		bool Run(dupl::FrameData* frame_data);
+	};
+
+	class SniperFilter : public Filter
+	{
+	public:
+		bool Run(dupl::FrameData* frame_data);
+	};
+
+	
 }
 
 #endif

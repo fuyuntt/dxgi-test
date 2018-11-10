@@ -6,9 +6,13 @@
 namespace game {
 	const int kTimeout = 10;
 
-	bool HasNext(const RECT& rect, const POINT& p)
+	POINT BeginPoint(const RECT& rect)
 	{
-		return p.x < rect.right || p.y < rect.bottom;
+		return POINT{ rect.left, rect.top };
+	}
+	bool IsInRect(const RECT& rect, const POINT& p)
+	{
+		return p.x <= rect.right && p.y <= rect.bottom;
 	}
 	void Next(const RECT& rect, POINT* p)
 	{
@@ -37,13 +41,18 @@ namespace game {
 	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash)
 	{
 		logger::info("开始准备将weapon [%u] 写入文件", hash);
-		int size = frame->height * frame->width * 4;
+		int size = frame->height * frame->width * 3;
 		BYTE* buffer = new BYTE[size];
-		memcpy(buffer, frame->buffer, size);
+		BYTE* p_d_end = buffer + size;
+		for (BYTE *p_s = frame->buffer, *p_d = buffer; p_d < p_d_end; p_s += 4, p_d += 3)
+		{
+			p_d[0] = p_s[2];
+			p_d[1] = p_s[1];
+			p_d[2] = p_s[0];
+		}
 		dupl::FrameData* cp_frame = new dupl::FrameData{ buffer, frame->height, frame->width };
 		_beginthreadex(NULL, 0, SavePng, new SavePngArg{ hash, cp_frame }, 0, NULL);
 	}
-
 
 	Controller::Controller() : dupl_manager_(nullptr)
 	{
@@ -91,24 +100,18 @@ namespace game {
 
 		while (true)
 		{
-			bool isTimeout;
-			ReturnStatus st = dupl_manager_->GetFrame(kTimeout, &frame_data, &isTimeout);
+			bool is_timeout;
+			ReturnStatus st = dupl_manager_->GetFrame(kTimeout, &frame_data, &is_timeout);
 			if (st != SUCCESS)
 			{
 				return st;
 			}
 			std::vector<Filter*>::iterator it;
-			Context context;
 			for (it = filters_.begin(); it != filters_.end(); it++)
 			{
-				if (isTimeout)
-				{
-					(*it)->Run(NULL, &context);
-				}
-				else
-				{
-					(*it)->Run(&frame_data, &context);
-				}
+				bool is_continue = (*it)->Run(is_timeout ? NULL : &frame_data);
+				if (!is_continue)
+					break;
 			}
 			dupl_manager_->DoneWithFrame();
 		}

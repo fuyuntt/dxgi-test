@@ -168,10 +168,12 @@
     <ClCompile Include="duplication_manager.cc" />
     <ClCompile Include="game_main.cc" />
     <ClCompile Include="game.cc" />
+    <ClCompile Include="is_in_range_filter.cc" />
     <ClCompile Include="kml.cc" />
     <ClCompile Include="logger.cc" />
     <ClCompile Include="message.cc" />
     <ClCompile Include="png_writer.cc" />
+    <ClCompile Include="sniper_filter.cc" />
     <ClCompile Include="stdafx.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

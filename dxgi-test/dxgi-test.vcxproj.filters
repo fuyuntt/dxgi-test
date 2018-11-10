@@ -92,6 +92,12 @@
     <ClCompile Include="kml.cc">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="sniper_filter.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="is_in_range_filter.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Library Include="libpng16.lib">

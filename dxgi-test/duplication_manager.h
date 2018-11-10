@@ -31,9 +31,9 @@ namespace dupl
 		int height;
 		int width;
 
-		COLOR_BGRA* GetPixel(int x, int y)
+		COLOR_BGRA* GetPixel(const POINT& p)
 		{
-			return reinterpret_cast<COLOR_BGRA*>(buffer) + y * width + x;
+			return reinterpret_cast<COLOR_BGRA*>(buffer) + p.y * width + p.x;
 		}
 
 
