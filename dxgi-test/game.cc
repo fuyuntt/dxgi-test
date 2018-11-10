@@ -2,9 +2,10 @@
 #include "game.h"
 #include "process.h"
 #include "png_writer.h"
+#include "kml_manager.h"
 
 namespace game {
-	const int kTimeout = 10;
+	const int kTimeout = 500;
 
 	POINT BeginPoint(const RECT& rect)
 	{
@@ -97,7 +98,13 @@ namespace game {
 	ReturnStatus Controller::StartGaming()
 	{
 		dupl::FrameData frame_data;
-		Context context;
+		Context context = {NONE, false, 0};
+		unsigned res = _beginthreadex(NULL, 0, kml::ManageKml, NULL, 0, &context.kml_thread_id);
+		if (res == 0)
+		{
+			logger::error("键鼠操作线程创建失败");
+			return ERROR_UNEXPECTED;
+		}
 		while (true)
 		{
 			bool is_timeout;
@@ -106,6 +113,11 @@ namespace game {
 			{
 				return st;
 			}
+			if (is_timeout)
+			{
+				continue;
+			}
+			context.tick_count = GetTickCount();
 			std::vector<Filter*>::iterator it;
 			for (it = filters_.begin(); it != filters_.end(); it++)
 			{

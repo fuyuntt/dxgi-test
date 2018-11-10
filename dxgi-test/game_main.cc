@@ -13,8 +13,13 @@
 
 int main()
 {
+	SetConsoleCtrlHandler(NULL, true);
 	logger::info("开始程序");
-
+	if (!(kml::LoadDLL() && kml::InitDevice()))
+	{
+		system("pause");
+		return 1;
+	}
 	ReturnStatus status = SUCCESS;
 	game::Controller controller;
 	while(status != ERROR_UNEXPECTED)
@@ -30,6 +35,7 @@ int main()
 		logger::info("初始化成功");
 		controller.AddFilter(new game::WeaponFilter());
 		controller.AddFilter(new game::IsInRangeFilter());
+		controller.AddFilter(new game::SniperFilter());
 		status = controller.StartGaming();
 		if (status == ERROR_EXPECTED)
 		{
@@ -38,24 +44,4 @@ int main()
 	}
 	system("pause");
     return 0;
-}
-int main_bak()
-{
-	logger::info("开始程序");
-	if (!kml::LoadDLL())
-	{
-		goto end;
-	}
-	if (!kml::InitDevice())
-	{
-		goto end;
-	}
-	while (true)
-	{
-		kml::KeyPress(" ", 1);
-		Sleep(1000);
-	}
-end:
-	system("pause");
-	return 0;
 }

@@ -12,6 +12,7 @@ namespace game {
 	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash);
 
 	enum WeaponType {
+		NONE,
 		SNIPER,
 		AUTOMATIC_RIFLE
 	};
@@ -20,6 +21,8 @@ namespace game {
 	{
 		WeaponType weapon_type;
 		bool is_in_range;
+		DWORD tick_count;
+		unsigned int kml_thread_id;
 	};
 
 	class Filter

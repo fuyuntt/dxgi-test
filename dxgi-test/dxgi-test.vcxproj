@@ -153,6 +153,7 @@
     <ClInclude Include="filters.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="kml.h" />
+    <ClInclude Include="kml_manager.h" />
     <ClInclude Include="logger.h" />
     <ClInclude Include="message.h" />
     <ClInclude Include="png.h" />
@@ -170,6 +171,7 @@
     <ClCompile Include="game.cc" />
     <ClCompile Include="is_in_range_filter.cc" />
     <ClCompile Include="kml.cc" />
+    <ClCompile Include="kml_manager.cc" />
     <ClCompile Include="logger.cc" />
     <ClCompile Include="message.cc" />
     <ClCompile Include="png_writer.cc" />

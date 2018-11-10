@@ -63,6 +63,9 @@
     <ClInclude Include="kml.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="kml_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cc">
@@ -96,6 +99,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="is_in_range_filter.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="kml_manager.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
