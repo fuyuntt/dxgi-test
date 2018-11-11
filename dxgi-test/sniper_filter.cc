@@ -44,15 +44,15 @@ namespace game
 		} 
 		if (context->is_in_range && isRoom(frame_data))
 		{
-			PostThreadMessage(context->kml_thread_id, KML_LEFT_CLICK, 0, 1);
-			PostThreadMessage(context->kml_thread_id, KML_SLEEP, 0, 150);
-			PostThreadMessage(context->kml_thread_id, KML_WHEELS_MOVES, 0, -1);
+			PostThreadMessage(kml::thread_id, KML_LEFT_CLICK, 0, 1);
+			PostThreadMessage(kml::thread_id, KML_SLEEP, 0, 150);
+			PostThreadMessage(kml::thread_id, KML_WHEELS_MOVES, 0, -1);
 			weekup_tick = context->tick_count + 650;
 			SHORT capital_state = GetKeyState(VK_CAPITAL) & 0x01;
 			if (!capital_state)
 			{
-				PostThreadMessage(context->kml_thread_id, KML_SLEEP, 0, 200);
-				PostThreadMessage(context->kml_thread_id, KML_WHEELS_MOVES, 0, 1);
+				PostThreadMessage(kml::thread_id, KML_SLEEP, 0, 200);
+				PostThreadMessage(kml::thread_id, KML_WHEELS_MOVES, 0, 1);
 				weekup_tick += 200;
 			}
 			state_ = SLEEPING;
@@ -74,7 +74,7 @@ namespace game
 		for (POINT p = BeginPoint(kSnipRect); IsInRect(kSnipRect, p); Next(kSnipRect, &p))
 		{
 			dupl::COLOR_BGRA* pixel = frame_data->GetPixel(p);
-			if (!(*pixel == kBlack))
+			if (*pixel != kBlack)
 				return false;
 		}
 		return true;

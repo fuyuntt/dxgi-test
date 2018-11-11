@@ -19,6 +19,7 @@ namespace game
 	class SniperFilter : public Filter
 	{
 	public:
+		SniperFilter() : state_(NON_SNIPE) {}
 		bool Run(dupl::FrameData* frame_data, Context* context);
 	private:
 		enum State

@@ -15,7 +15,9 @@
 
 namespace kml
 {
+	extern unsigned int thread_id;
 	unsigned __stdcall ManageKml(void* args);
+	bool StartThread();
 }
 
 #endif // !KML_MANAGER_H__

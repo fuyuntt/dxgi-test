@@ -19,6 +19,12 @@ namespace dupl
 				r == bgra.r &&
 				a == bgra.a;
 		}
+		bool operator!=(const COLOR_BGRA& bgra) const {
+			return b != bgra.b ||
+				g != bgra.g ||
+				r != bgra.r ||
+				a != bgra.a;
+		}
 	};
 	//
 	// FRAME_DATA holds information about an acquired frame

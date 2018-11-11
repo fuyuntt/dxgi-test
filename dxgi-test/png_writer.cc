@@ -1,11 +1,51 @@
 #include "stdafx.h"
 #include "png_writer.h"
 #include "logger.h"
+#include "duplication_manager.h"
+#include "process.h"
 
 #define BIT_DEPTH 8
 #define BYTES_PER_PIXEL 3
+
+extern char* g_file_store_dir;
 namespace png
 {
+	struct SavePngArg {
+		unsigned hash;
+		dupl::FrameData* cp_frame;
+	};
+	// 写图片线程
+	unsigned __stdcall SavePng(void* args)
+	{
+		SavePngArg* arg = reinterpret_cast<SavePngArg*>(args);
+
+		char out_file[sizeof(g_file_store_dir) + 15 + 4];
+		sprintf(out_file, "%s%u.png", g_file_store_dir, arg->hash);
+		png::WritePng(arg->cp_frame->buffer, arg->cp_frame->width, arg->cp_frame->height, out_file);
+		unsigned hash = arg->hash;
+		delete[] arg->cp_frame->buffer;
+		delete arg->cp_frame;
+		delete arg;
+		logger::info("weapon [%u] 写入文件完成", hash);
+		return 0;
+	}
+
+	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash)
+	{
+		logger::info("开始准备将weapon [%u] 写入文件", hash);
+		int size = frame->height * frame->width * 3;
+		BYTE* buffer = new BYTE[size];
+		BYTE* p_d_end = buffer + size;
+		for (BYTE *p_s = frame->buffer, *p_d = buffer; p_d < p_d_end; p_s += 4, p_d += 3)
+		{
+			p_d[0] = p_s[2];
+			p_d[1] = p_s[1];
+			p_d[2] = p_s[0];
+		}
+		dupl::FrameData* cp_frame = new dupl::FrameData{ buffer, frame->height, frame->width };
+		_beginthreadex(NULL, 0, SavePng, new SavePngArg{ hash, cp_frame }, 0, NULL);
+	}
+
 	bool WritePng(png_byte* buffer, int width, int height, const char* file_name)
 	{
 		FILE* file;

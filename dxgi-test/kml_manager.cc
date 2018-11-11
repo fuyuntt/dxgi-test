@@ -3,6 +3,7 @@
 #include "kml_manager.h"
 #include "kml.h"
 #include "logger.h"
+#include "process.h"
 
 namespace kml
 {
@@ -57,5 +58,15 @@ namespace kml
 		}
 		logger::info("键鼠线程结束");
 		return 0;
+	}
+	unsigned int thread_id;
+	bool StartThread()
+	{
+		unsigned res = _beginthreadex(NULL, 0, kml::ManageKml, NULL, 0, &thread_id);
+		if (res == 0)
+		{
+			logger::error("键鼠操作线程创建失败");
+			return false;
+		}
 	}
 }

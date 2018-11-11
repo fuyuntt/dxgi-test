@@ -9,7 +9,6 @@ namespace game {
 	POINT BeginPoint(const RECT& rect);
 	bool IsInRect(const RECT& rect, const POINT& p);
 	void Next(const RECT& rect, POINT* p);
-	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash);
 
 	enum WeaponType {
 		NONE,
@@ -22,7 +21,6 @@ namespace game {
 		WeaponType weapon_type;
 		bool is_in_range;
 		DWORD tick_count;
-		unsigned int kml_thread_id;
 	};
 
 	class Filter

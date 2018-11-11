@@ -21,7 +21,7 @@ namespace game
 	};
 	static const std::unordered_map<unsigned, Weapon*>::value_type init_value[] =
 	{
-		std::unordered_map<unsigned, Weapon*>::value_type(123, new Weapon {23, "哈哈", SNIPER})
+		std::unordered_map<unsigned, Weapon*>::value_type(3925178, new Weapon {3925178, "TRG-21", SNIPER})
 	};
 	static const std::unordered_map<unsigned, Weapon*> weapons(init_value, init_value + 1);
 	static std::unordered_map<unsigned, void*> saved_hash;
@@ -75,7 +75,7 @@ namespace game
 			if (saved_hash.find(hash) == saved_hash.end())
 			{
 				logger::info("找不到该hash的枪,开始使用默认的选项");
-				SaveFrameAsPng(frame_data, hash);
+				png::SaveFrameAsPng(frame_data, hash);
 				saved_hash.insert(std::pair<unsigned, void*>(hash, NULL));
 			}
 		} else {
