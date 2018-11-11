@@ -2,6 +2,7 @@
 
 #include "filters.h"
 #include "kml_manager.h"
+#include "png_writer.h"
 
 namespace game
 {
@@ -35,6 +36,7 @@ namespace game
 		return state_ != SNIPE;
 	}
 	bool isRoom(dupl::FrameData* frame_data);
+	int debug_pic_count = 0;
 	bool SniperFilter::SnipeRun(dupl::FrameData* frame_data, Context* context)
 	{
 		if (context->weapon_type != SNIPER)
@@ -44,16 +46,25 @@ namespace game
 		} 
 		if (context->is_in_range && isRoom(frame_data))
 		{
-			PostThreadMessage(kml::thread_id, KML_LEFT_CLICK, 0, 1);
-			PostThreadMessage(kml::thread_id, KML_SLEEP, 0, 150);
+			BOOL post_res;
+			post_res = PostThreadMessage(kml::thread_id, KML_LEFT_CLICK, 0, 1);
+			if (!post_res)
+			{
+				logger::error("post click error %u", GetLastError());
+			}
+			post_res = PostThreadMessage(kml::thread_id, KML_SLEEP, 0, 150);
+			if (!post_res)
+			{
+				logger::error("post sleep error %u", GetLastError());
+			}
 			PostThreadMessage(kml::thread_id, KML_WHEELS_MOVES, 0, -1);
-			weekup_tick = context->tick_count + 650;
+			weekup_tick_ = context->tick_count + 650;
 			SHORT capital_state = GetKeyState(VK_CAPITAL) & 0x01;
 			if (!capital_state)
 			{
 				PostThreadMessage(kml::thread_id, KML_SLEEP, 0, 200);
 				PostThreadMessage(kml::thread_id, KML_WHEELS_MOVES, 0, 1);
-				weekup_tick += 200;
+				weekup_tick_ += 200;
 			}
 			state_ = SLEEPING;
 		}
@@ -62,7 +73,7 @@ namespace game
 
 	bool SniperFilter::SleepRun(dupl::FrameData* frame_data, Context* context)
 	{
-		if (context->tick_count > weekup_tick)
+		if (context->tick_count > weekup_tick_)
 		{
 			state_ = SNIPE;
 		}

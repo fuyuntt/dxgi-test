@@ -12,8 +12,14 @@ namespace kml
 		logger::info("开始监听键鼠消息");
 		MSG msg;
 		char* key = "-";
-		while (GetMessage(&msg, 0, 0, 0))
+		BOOL msg_ret;
+		while ((msg_ret = GetMessage(&msg, NULL, WM_USER, WM_USER + 16)) != 0)
 		{
+			if (msg_ret == -1)
+			{
+				logger::error("消息队列异常 %d", msg_ret);
+				continue;
+			}
 			switch (msg.message)
 			{
 			case KML_KEY_DOWN:
@@ -36,6 +42,7 @@ namespace kml
 				break;
 			case KML_LEFT_CLICK:
 				LeftClick(msg.lParam);
+				logger::info("left click %ld", msg.lParam);
 				break;
 			case KML_RIGHT_DOWN:
 				RightDown();
@@ -48,9 +55,12 @@ namespace kml
 				break;
 			case KML_WHEELS_MOVES:
 				WheelsMove(msg.lParam);
+				logger::info("wheels move %ld", msg.lParam);
 				break;
 			case KML_SLEEP:
+				logger::info("sleep %ld", msg.lParam);
 				Sleep(msg.lParam);
+				logger::info("sleep %ld end", msg.lParam);
 				break;
 			default:
 				break;
@@ -68,5 +78,6 @@ namespace kml
 			logger::error("键鼠操作线程创建失败");
 			return false;
 		}
+		return true;
 	}
 }

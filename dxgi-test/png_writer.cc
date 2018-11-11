@@ -18,11 +18,12 @@ namespace png
 	unsigned __stdcall SavePng(void* args)
 	{
 		SavePngArg* arg = reinterpret_cast<SavePngArg*>(args);
-
-		char out_file[sizeof(g_file_store_dir) + 15 + 4];
+		unsigned path_len = strlen(g_file_store_dir);
+		char* out_file = new char[path_len + 15 + 4];
 		sprintf(out_file, "%s%u.png", g_file_store_dir, arg->hash);
 		png::WritePng(arg->cp_frame->buffer, arg->cp_frame->width, arg->cp_frame->height, out_file);
 		unsigned hash = arg->hash;
+		delete[] out_file;
 		delete[] arg->cp_frame->buffer;
 		delete arg->cp_frame;
 		delete arg;

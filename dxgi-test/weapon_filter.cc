@@ -9,16 +9,10 @@ namespace game
 	// 武器名称
 	static const RECT weapon_name_rect = { 816, 695, 1000, 704 };
 	// 准星
-	static const RECT front_sight = { 380, 384, 511, 384 };
+	static const RECT front_sight = { 380, 385, 511, 385 };
 
 	static const dupl::COLOR_BGRA kWeaponNameColor = { 0xC1, 0xC1, 0x99, 0xff };
 
-	struct Weapon
-	{
-		unsigned hash;
-		const char* weapon_name;
-		WeaponType weapon_type;
-	};
 	static const std::unordered_map<unsigned, Weapon*>::value_type init_value[] =
 	{
 		std::unordered_map<unsigned, Weapon*>::value_type(3925178, new Weapon {3925178, "TRG-21", SNIPER})
@@ -31,7 +25,8 @@ namespace game
 		int count = 0;
 		for (POINT p = BeginPoint(front_sight); IsInRect(front_sight, p); Next(front_sight, &p))
 		{
-			if (*(frame_data->GetPixel(p)) == *(frame_data->GetPixel(p)))
+			POINT next_p = { p.x + 1, p.y };
+			if (*(frame_data->GetPixel(p)) == *(frame_data->GetPixel(next_p)))
 			{
 				count++;
 			} else {
@@ -53,7 +48,7 @@ namespace game
 		}
 		if (frame_data->width != SCREEN_WIDTH)
 		{
-			return false;
+			//return false;
 		}
 		unsigned hash = 0;
 		for (POINT p = BeginPoint(weapon_name_rect); IsInRect(weapon_name_rect, p); Next(weapon_name_rect, &p))
@@ -80,8 +75,12 @@ namespace game
 			}
 		} else {
 			Weapon* weapon = it->second;
+			if (weapon != current_weapon_)
+			{
+				logger::info("武器切换到[%s]， 类型[%d]", weapon->weapon_name, weapon->weapon_type);
+				current_weapon_ = weapon;
+			}
 			context->weapon_type = weapon->weapon_type;
-			logger::info("武器切换到[%s]， 类型[%d]", weapon->weapon_name, weapon->weapon_type);
 		}
 		return true;
 	}

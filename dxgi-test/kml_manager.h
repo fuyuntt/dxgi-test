@@ -1,17 +1,17 @@
 #ifndef KML_MANAGER_H__
 #define KML_MANAGER_H__
 
-#define KML_KEY_DOWN		0x0001
-#define KML_KEY_UP			0x0002
-#define KML_KEY_PRESS		0x0003
-#define KML_LEFT_DOWN		0x0004
-#define KML_LEFT_UP			0x0005
-#define KML_LEFT_CLICK		0x0006
-#define KML_RIGHT_DOWN		0x0007
-#define KML_RIGHT_UP		0x0008
-#define KML_RIGHT_CLICK		0x0009
-#define KML_WHEELS_MOVES	0x000A
-#define KML_SLEEP			0x000B
+const int KML_KEY_DOWN = WM_USER + 0x0001;
+const int KML_KEY_UP = WM_USER + 0x0002;
+const int KML_KEY_PRESS = WM_USER + 0x0003;
+const int KML_LEFT_DOWN = WM_USER + 0x0004;
+const int KML_LEFT_UP = WM_USER + 0x0005;
+const int KML_LEFT_CLICK = WM_USER + 0x0006;
+const int KML_RIGHT_DOWN=		WM_USER + 0x0007;
+const int KML_RIGHT_UP	=	WM_USER + 0x0008;
+const int KML_RIGHT_CLICK=		WM_USER + 0x0009;
+const int KML_WHEELS_MOVES=	WM_USER + 0x000A;
+const int KML_SLEEP		=	WM_USER + 0x000B;
 
 namespace kml
 {

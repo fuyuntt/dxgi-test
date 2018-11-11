@@ -4,17 +4,28 @@
 
 namespace kml
 {
-	static int(*openDevice)();
-	static int(*keyDown)(LPCSTR key);
-	static int(*keyUp)(LPCSTR key);
-	static int(*keyPress)(LPCSTR key, int count);
-	static int(*leftDown)();
-	static int(*leftUp)();
-	static int(*leftClick)(int count);
-	static int(*rightDown)();
-	static int(*rightUp)();
-	static int(*rightClick)(int count);
-	static int(*wheelsMove)(int y);
+	typedef int(__stdcall *OpenDeviceFunc)();
+	typedef int(__stdcall *KeyDownFunc)(LPCSTR key);
+	typedef int(__stdcall *KeyUpFunc)(LPCSTR key);
+	typedef int(__stdcall *KeyPressFunc)(LPCSTR key, int count);
+	typedef int(__stdcall *LeftDownFunc)();
+	typedef int(__stdcall *LeftUpFunc)();
+	typedef int(__stdcall *LeftClickFunc)(int count);
+	typedef int(__stdcall *RightDownFunc)();
+	typedef int(__stdcall *RightUpFunc)();
+	typedef int(__stdcall *RightClickFunc)(int count);
+	typedef int(__stdcall *WheelsMoveFunc)(int y);
+	OpenDeviceFunc openDevice;
+	KeyDownFunc keyDown;
+	KeyUpFunc keyUp;
+	KeyPressFunc keyPress;
+	LeftDownFunc leftDown;
+	LeftUpFunc leftUp;
+	LeftClickFunc leftClick;
+	RightDownFunc rightDown;
+	RightUpFunc rightUp;
+	RightClickFunc rightClick;
+	WheelsMoveFunc wheelsMove;
 
 	BOOL LoadDLL()
 	{
@@ -25,17 +36,17 @@ namespace kml
 			logger::error("º¸ Û∂ØÃ¨ø‚‘ÿ»Î ß∞‹");
 			return false;
 		}
-		openDevice = (int(*)())GetProcAddress(hDllInst, "OpenDevice");
-		keyDown = (int(*)(LPCSTR key))GetProcAddress(hDllInst, "KeyDown");
-		keyUp = (int(*)(LPCSTR key))GetProcAddress(hDllInst, "KeyUp");
-		keyPress = (int(*)(LPCSTR key, int count))GetProcAddress(hDllInst, "KeyPress");
-		leftDown = (int(*)())GetProcAddress(hDllInst, "LeftDown");
-		leftUp = (int(*)())GetProcAddress(hDllInst, "LeftUp");
-		leftClick = (int(*)(int count))GetProcAddress(hDllInst, "LeftClick");
-		rightDown = (int(*)())GetProcAddress(hDllInst, "rightDown");
-		rightUp = (int(*)())GetProcAddress(hDllInst, "rightUp");
-		rightClick = (int(*)(int count))GetProcAddress(hDllInst, "rightClick");
-		wheelsMove = (int(*)(int y))GetProcAddress(hDllInst, "WheelsMove");
+		openDevice = (OpenDeviceFunc)GetProcAddress(hDllInst, "OpenDevice");
+		keyDown = (KeyDownFunc)GetProcAddress(hDllInst, "KeyDown");
+		keyUp = (KeyUpFunc)GetProcAddress(hDllInst, "KeyUp");
+		keyPress = (KeyPressFunc)GetProcAddress(hDllInst, "KeyPress");
+		leftDown = (LeftDownFunc)GetProcAddress(hDllInst, "LeftDown");
+		leftUp = (LeftUpFunc)GetProcAddress(hDllInst, "LeftUp");
+		leftClick = (LeftClickFunc)GetProcAddress(hDllInst, "LeftClick");
+		rightDown = (RightDownFunc)GetProcAddress(hDllInst, "RightDown");
+		rightUp = (RightUpFunc)GetProcAddress(hDllInst, "RightUp");
+		rightClick = (RightClickFunc)GetProcAddress(hDllInst, "RightClick");
+		wheelsMove = (WheelsMoveFunc)GetProcAddress(hDllInst, "WheelsMove");
 		logger::info("º¸ Û∂ØÃ¨ø‚‘ÿ»ÎÕÍ≥…");
 		return true;
 	}

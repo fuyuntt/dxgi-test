@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "game.h"
 
+#define COUNT_SECONDS 10
+
 namespace game {
 	const int kTimeout = 500;
 
@@ -62,8 +64,18 @@ namespace game {
 	{
 		dupl::FrameData frame_data;
 		Context context = {NONE, false, 0};
+		DWORD next_tick = GetTickCount() + COUNT_SECONDS * 1000;
+		DWORD count = 0;
 		while (true)
 		{
+			count++;
+			DWORD cur_tick = GetTickCount();
+			if (cur_tick >= next_tick)
+			{
+				logger::info("µ±Ç°½ØÆÁÖ¡ÂÊ[%d]", count / COUNT_SECONDS);
+				next_tick = cur_tick + COUNT_SECONDS * 1000;
+				count = 0;
+			}
 			bool is_timeout;
 			dupl_manager_->DoneWithFrame();
 			ReturnStatus st = dupl_manager_->GetFrame(kTimeout, &frame_data, &is_timeout);
@@ -75,7 +87,7 @@ namespace game {
 			{
 				continue;
 			}
-			context.tick_count = GetTickCount();
+			context.tick_count = cur_tick;
 			std::vector<Filter*>::iterator it;
 			for (it = filters_.begin(); it != filters_.end(); it++)
 			{

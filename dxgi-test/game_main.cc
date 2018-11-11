@@ -15,9 +15,9 @@
 char* g_file_store_dir = "";
 int main(int argc, char* argv[])
 {
-	if (argc == 1)
+	if (argc == 2)
 	{
-		g_file_store_dir = argv[0];
+		g_file_store_dir = argv[1];
 	}
 	SetConsoleCtrlHandler(NULL, true);
 	logger::info("开始程序");
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 	game::Controller controller;
 	while(status != ERROR_UNEXPECTED)
 	{
-		logger::info("开始初始化");
+		logger::info("开始初始化游戏控制器");
 		status = controller.Init();
 		if (status == ERROR_EXPECTED)
 		{
@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 			logger::error("桌面复制初始化失败");
 			break;
 		}
-		logger::info("初始化成功");
+		logger::info("游戏控制器初始化成功");
 		controller.AddFilter(new game::WeaponFilter());
 		controller.AddFilter(new game::IsInRangeFilter());
 		controller.AddFilter(new game::SniperFilter());

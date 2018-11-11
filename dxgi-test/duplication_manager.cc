@@ -54,6 +54,7 @@ namespace dupl
 	//
 	DuplicationManager::~DuplicationManager()
 	{
+		DoneWithFrame();
 		if (desk_dupl_)
 		{
 			RELEASE(desk_dupl_);

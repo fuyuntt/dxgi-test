@@ -4,10 +4,19 @@
 #include "game.h"
 namespace game
 {
+	struct Weapon
+	{
+		unsigned hash;
+		const char* weapon_name;
+		WeaponType weapon_type;
+	};
+
 	class WeaponFilter : public Filter
 	{
 	public:
 		bool Run(dupl::FrameData* frame_data, Context* context);
+	private:
+		Weapon* current_weapon_;
 	};
 
 	class IsInRangeFilter : public Filter
@@ -28,7 +37,7 @@ namespace game
 			SNIPE,
 			SLEEPING
 		} state_;
-		DWORD weekup_tick;
+		DWORD weekup_tick_;
 		bool NonSnipeRun(dupl::FrameData* frame_data, Context* context);
 		bool SnipeRun(dupl::FrameData* frame_data, Context* context);
 		bool SleepRun(dupl::FrameData* frame_data, Context* context);
