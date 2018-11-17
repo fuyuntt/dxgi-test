@@ -1,23 +1,32 @@
 #ifndef KML_MANAGER_H__
 #define KML_MANAGER_H__
 
-const int KML_KEY_DOWN = WM_USER + 0x0001;
-const int KML_KEY_UP = WM_USER + 0x0002;
-const int KML_KEY_PRESS = WM_USER + 0x0003;
-const int KML_LEFT_DOWN = WM_USER + 0x0004;
-const int KML_LEFT_UP = WM_USER + 0x0005;
-const int KML_LEFT_CLICK = WM_USER + 0x0006;
-const int KML_RIGHT_DOWN=		WM_USER + 0x0007;
-const int KML_RIGHT_UP	=	WM_USER + 0x0008;
-const int KML_RIGHT_CLICK=		WM_USER + 0x0009;
-const int KML_WHEELS_MOVES=	WM_USER + 0x000A;
-const int KML_SLEEP		=	WM_USER + 0x000B;
+#include <memory>
+#include "blocking_queue.h"
 
 namespace kml
 {
-	extern unsigned int thread_id;
-	unsigned __stdcall ManageKml(void* args);
-	bool StartThread();
+	enum MessageType
+	{
+		KML_KEY_DOWN,
+		KML_KEY_UP,
+		KML_KEY_PRESS,
+		KML_LEFT_DOWN,
+		KML_LEFT_UP,
+		KML_LEFT_CLICK,
+		KML_RIGHT_DOWN,
+		KML_RIGHT_UP,
+		KML_RIGHT_CLICK,
+		KML_WHEELS_MOVES,
+		KML_SLEEP
+	};
+	struct Message
+	{
+		MessageType msg;
+		std::string content;
+		int count;
+	};
+	void StartKmlManager(BlockingQueue<std::shared_ptr<Message>>& msg_queue);
 }
 
 #endif // !KML_MANAGER_H__

@@ -3,36 +3,29 @@
 #include "kml_manager.h"
 #include "kml.h"
 #include "logger.h"
-#include "process.h"
+#include "blocking_queue.h"
+#include <memory>
+#include <thread>
 
 namespace kml
 {
-	unsigned __stdcall ManageKml(void* args)
+	void MessageExecutor(BlockingQueue<std::shared_ptr<Message>>& msg_queue)
 	{
 		logger::info("开始监听键鼠消息");
-		MSG msg;
-		char* key = "-";
-		BOOL msg_ret;
-		while ((msg_ret = GetMessage(&msg, NULL, WM_USER, WM_USER + 16)) != 0)
+		while (true)
 		{
-			if (msg_ret == -1)
-			{
-				logger::error("消息队列异常 %d", msg_ret);
-				continue;
-			}
-			switch (msg.message)
+			std::shared_ptr<Message> kml_msg = msg_queue.take();
+			std::string content = kml_msg->content;
+			switch (kml_msg->msg)
 			{
 			case KML_KEY_DOWN:
-				key[0] = msg.wParam;
-				KeyDown(key);
+				KeyDown(content.c_str());
 				break;
 			case KML_KEY_UP:
-				key[0] = msg.wParam;
-				KeyUp(key);
+				KeyUp(content.c_str());
 				break;
 			case KML_KEY_PRESS:
-				key[0] = msg.wParam;
-				KeyPress(key, msg.lParam);
+				KeyPress(content.c_str(), kml_msg->count);
 				break;
 			case KML_LEFT_DOWN:
 				LeftDown();
@@ -41,8 +34,8 @@ namespace kml
 				LeftUp();
 				break;
 			case KML_LEFT_CLICK:
-				LeftClick(msg.lParam);
-				logger::info("left click %ld", msg.lParam);
+				LeftClick(kml_msg->count);
+				logger::info("left click [%ld]", kml_msg->count);
 				break;
 			case KML_RIGHT_DOWN:
 				RightDown();
@@ -51,33 +44,26 @@ namespace kml
 				RightUp();
 				break;
 			case KML_RIGHT_CLICK:
-				RightClick(msg.lParam);
+				RightClick(kml_msg->count);
 				break;
 			case KML_WHEELS_MOVES:
-				WheelsMove(msg.lParam);
-				logger::info("wheels move %ld", msg.lParam);
+				logger::info("wheels move [%ld]", kml_msg->count);
+				WheelsMove(kml_msg->count);
 				break;
 			case KML_SLEEP:
-				logger::info("sleep %ld", msg.lParam);
-				Sleep(msg.lParam);
-				logger::info("sleep %ld end", msg.lParam);
+				Sleep(kml_msg->count);
+				logger::info("sleep [%ld] end", kml_msg->count);
 				break;
 			default:
+				logger::info("unknown message [%d]", kml_msg->msg);
 				break;
 			}
 		}
 		logger::info("键鼠线程结束");
-		return 0;
 	}
-	unsigned int thread_id;
-	bool StartThread()
+	void StartKmlManager(BlockingQueue<std::shared_ptr<Message>>& msg_queue)
 	{
-		unsigned res = _beginthreadex(NULL, 0, kml::ManageKml, NULL, 0, &thread_id);
-		if (res == 0)
-		{
-			logger::error("键鼠操作线程创建失败");
-			return false;
-		}
-		return true;
+		std::thread kml_thread(MessageExecutor, msg_queue);
+		kml_thread.detach();
 	}
 }

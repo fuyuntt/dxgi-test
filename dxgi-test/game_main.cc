@@ -11,22 +11,25 @@
 #include "kml.h"
 #include "kml_manager.h"
 #include "filters.h"
+#include "iostream"
+#include "string"
+#include "blocking_queue.h"
+#include "memory"
 
 char* g_file_store_dir = "";
-int main(int argc, char* argv[])
+int main_bak(int argc, char* argv[])
 {
 	if (argc == 2)
 	{
 		g_file_store_dir = argv[1];
 	}
-	SetConsoleCtrlHandler(NULL, true);
 	logger::info("¿ªÊ¼³ÌÐò");
 	if (!(kml::LoadDLL() && kml::InitDevice()))
 	{
 		system("pause");
 		return 1;
 	}
-	if (!kml::StartThread())
+	if (!kml::StartKmlManager())
 	{
 		system("pause");
 		return 1;

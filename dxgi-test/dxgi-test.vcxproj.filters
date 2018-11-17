@@ -60,10 +60,10 @@
     <ClInclude Include="filters.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="kml.h">
+    <ClInclude Include="blocking_queue.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="kml_manager.h">
+    <ClInclude Include="keyboard_mouse.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -92,16 +92,16 @@
     <ClCompile Include="game_main.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="kml.cc">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="sniper_filter.cc">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="is_in_range_filter.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="kml_manager.cc">
+    <ClCompile Include="test.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="keyboard_mouse.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
