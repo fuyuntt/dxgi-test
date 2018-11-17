@@ -59,7 +59,7 @@ namespace km
 		}
 		logger_.Info("初始化键鼠设备成功\n");
 		logger_.Info("开始键鼠操作线程");
-		std::thread thread(this->DealMessage);
+		std::thread thread(&KeyboardMouse::DealMessage, this);
 		thread.detach();
 		logger_.Info("键鼠操作线程启动完成");
 		return true;
@@ -71,7 +71,7 @@ namespace km
 		while (true)
 		{
 			std::shared_ptr<Message> kml_msg = message_queue_.take();
-			logger_.Debug("收到消息[%d], 内容[%s], 计数[%d]", kml_msg->msg, kml_msg->content, kml_msg->count);
+			logger_.Debug("收到消息[%d], 内容[%s], 计数[%d]", kml_msg->msg, kml_msg->content.c_str(), kml_msg->count);
 			std::string content = kml_msg->content;
 			switch (kml_msg->msg)
 			{

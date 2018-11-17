@@ -6,6 +6,7 @@
 
 namespace game
 {
+	static log4c::Logger logger("WeaponFilter");
 	// 武器名称
 	static const RECT weapon_name_rect = { 816, 695, 1000, 704 };
 	// 准星
@@ -69,15 +70,15 @@ namespace game
 			context->weapon_type = IsSniper(frame_data) ? SNIPER : AUTOMATIC_RIFLE;
 			if (saved_hash.find(hash) == saved_hash.end())
 			{
-				logger::info("找不到该hash的枪,开始使用默认的选项");
-				png::SaveFrameAsPng(frame_data, hash);
+				logger.Info("找不到该hash的枪,开始使用默认的选项");
+				context->png_writer->SaveBuffer(frame_data->buffer, frame_data->width, frame_data->height, std::to_string(hash));
 				saved_hash.insert(std::pair<unsigned, void*>(hash, NULL));
 			}
 		} else {
 			Weapon* weapon = it->second;
 			if (weapon != current_weapon_)
 			{
-				logger::info("武器切换到[%s]， 类型[%d]", weapon->weapon_name, weapon->weapon_type);
+				logger.Info("武器切换到[%s]， 类型[%d]", weapon->weapon_name, weapon->weapon_type);
 				current_weapon_ = weapon;
 			}
 			context->weapon_type = weapon->weapon_type;

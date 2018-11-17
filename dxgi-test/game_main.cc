@@ -8,56 +8,36 @@
 #include "logger.h"
 #include "message.h"
 #include "game.h"
-#include "kml.h"
-#include "kml_manager.h"
+#include "keyboard_mouse.h"
 #include "filters.h"
-#include "iostream"
-#include "string"
-#include "blocking_queue.h"
 #include "memory"
 
-char* g_file_store_dir = "";
-int main_bak(int argc, char* argv[])
+static log4c::Logger logger("main");
+int main(int argc, char* argv[])
 {
+	char* file_store_dir = "";
 	if (argc == 2)
 	{
-		g_file_store_dir = argv[1];
+		file_store_dir = argv[1];
 	}
-	logger::info("开始程序");
-	if (!(kml::LoadDLL() && kml::InitDevice()))
-	{
-		system("pause");
-		return 1;
-	}
-	if (!kml::StartKmlManager())
-	{
-		system("pause");
-		return 1;
-	}
+	SetConsoleCtrlHandler(NULL, true);
+	logger.Info("开始程序");
 	ReturnStatus status = SUCCESS;
 	game::Controller controller;
+	controller.AddFilter(new game::WeaponFilter());
+	controller.AddFilter(new game::IsInRangeFilter());
+	controller.AddFilter(new game::SniperFilter());
 	while(status != ERROR_UNEXPECTED)
 	{
-		logger::info("开始初始化游戏控制器");
-		status = controller.Init();
-		if (status == ERROR_EXPECTED)
-		{
-			Sleep(1000);
-			continue;
-		}
+		status = controller.Init(std::string(file_store_dir));
 		if (status == ERROR_UNEXPECTED)
 		{
-			logger::error("桌面复制初始化失败");
 			break;
 		}
-		logger::info("游戏控制器初始化成功");
-		controller.AddFilter(new game::WeaponFilter());
-		controller.AddFilter(new game::IsInRangeFilter());
-		controller.AddFilter(new game::SniperFilter());
 		status = controller.StartGaming();
 		if (status == ERROR_EXPECTED)
 		{
-			logger::info("系统处于瞬态，开始重新初始化");
+			logger.Info("系统处于瞬态，开始重新初始化");
 		}
 	}
 	system("pause");

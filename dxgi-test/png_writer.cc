@@ -1,50 +1,53 @@
 #include "stdafx.h"
 #include "png_writer.h"
 #include "logger.h"
-#include "duplication_manager.h"
-#include "process.h"
+#include <memory>
+#include <thread>
 
 #define BIT_DEPTH 8
 #define BYTES_PER_PIXEL 3
 
-extern char* g_file_store_dir;
 namespace png
 {
-	struct SavePngArg {
-		unsigned hash;
-		dupl::FrameData* cp_frame;
-	};
-	// 写图片线程
-	unsigned __stdcall SavePng(void* args)
+	static log4c::Logger logger("PngWriter");
+
+	// 写入png文件
+	// buffer 是像素byte数组，顺序为BGRA
+	bool WritePng(png_byte* buffer, int width, int height, const char* file_name);
+	void PngWriter::Init(std::string dir)
 	{
-		SavePngArg* arg = reinterpret_cast<SavePngArg*>(args);
-		unsigned path_len = strlen(g_file_store_dir);
-		char* out_file = new char[path_len + 15 + 4];
-		sprintf(out_file, "%s%u.png", g_file_store_dir, arg->hash);
-		png::WritePng(arg->cp_frame->buffer, arg->cp_frame->width, arg->cp_frame->height, out_file);
-		unsigned hash = arg->hash;
-		delete[] out_file;
-		delete[] arg->cp_frame->buffer;
-		delete arg->cp_frame;
-		delete arg;
-		logger::info("weapon [%u] 写入文件完成", hash);
-		return 0;
+		logger.Info("初始化写图片线程");
+		dir_ = dir;
+		std::thread thread(&PngWriter::DealSave, this);
+		thread.detach();
+		logger.Info("写图片线程初始化完成");
 	}
 
-	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash)
+	// 写图片线程
+	void PngWriter::DealSave()
 	{
-		logger::info("开始准备将weapon [%u] 写入文件", hash);
-		int size = frame->height * frame->width * 3;
-		BYTE* buffer = new BYTE[size];
-		BYTE* p_d_end = buffer + size;
-		for (BYTE *p_s = frame->buffer, *p_d = buffer; p_d < p_d_end; p_s += 4, p_d += 3)
+		while (true)
+		{
+			std::shared_ptr<SavePngArg> arg = queue_.take();
+			std::string file_name = dir_ + arg->file_name;
+			WritePng((arg->buffer).get(), arg->width, arg->height, file_name.c_str());
+			logger.Info("图片 [%s] 写入文件完成", file_name.c_str());
+		}
+	}
+	void PngWriter::SaveBuffer(png_bytep buffer, int width, int height, std::string file_name)
+	{
+		logger.Info("开始准备将图片 [%s] 写入文件", file_name.c_str());
+		int size = height * width * 3;
+		std::shared_ptr<png_byte> buffer_dest(new png_byte[size], [](png_byte* b) {delete[] b; });
+		png_byte* p_d_start = buffer_dest.get();
+		png_byte* p_d_end = p_d_start + size;
+		for (png_byte *p_s = buffer, *p_d = p_d_start; p_d < p_d_end; p_s += 4, p_d += 3)
 		{
 			p_d[0] = p_s[2];
 			p_d[1] = p_s[1];
 			p_d[2] = p_s[0];
 		}
-		dupl::FrameData* cp_frame = new dupl::FrameData{ buffer, frame->height, frame->width };
-		_beginthreadex(NULL, 0, SavePng, new SavePngArg{ hash, cp_frame }, 0, NULL);
+		queue_.put(std::shared_ptr<SavePngArg>(new SavePngArg{ buffer_dest, width, height, file_name }));
 	}
 
 	bool WritePng(png_byte* buffer, int width, int height, const char* file_name)
@@ -54,7 +57,7 @@ namespace png
 		fopen_s(&file, file_name, "wb");
 		if (file == NULL)
 		{
-			logger::error("文件不存在：%s", file_name);
+			logger.Error("文件不存在：%s", file_name);
 			return false;
 		}
 

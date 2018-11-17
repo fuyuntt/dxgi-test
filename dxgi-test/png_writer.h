@@ -2,14 +2,27 @@
 #define PNG_WRITER_H_
 
 #include "png.h"
-#include "duplication_manager.h"
+#include "blocking_queue.h"
+#include <string>
 
 namespace png
 {
-	// 写入png文件
-	// buffer 是像素byte数组，顺序为BGRA
-	bool WritePng(png_bytep buffer, int width, int height, const char* file_name);
-	void SaveFrameAsPng(dupl::FrameData* frame, const unsigned hash);
+	class PngWriter
+	{
+	public:
+		void Init(std::string dir);
+		void SaveBuffer(png_bytep buffer, int width, int height, std::string file_name);
+	private:
+		struct SavePngArg {
+			std::shared_ptr<png_byte> buffer;
+			int width;
+			int height;
+			std::string file_name;
+		};
+		BlockingQueue<std::shared_ptr<SavePngArg>> queue_;
+		std::string dir_;
+		void DealSave();
+	};
 }
 
 #endif

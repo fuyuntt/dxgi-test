@@ -6,7 +6,7 @@
 #include <mutex>
 #include <Windows.h>
 
-namespace log
+namespace log4c
 {
 	static void print_time();
 	static HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -24,7 +24,7 @@ namespace log
 
 	void Logger::Debug(const char* format, ...)
 	{
-#ifdef DEBUG
+#ifdef _DEBUG
 		va_list args;
 		va_start(args, format);
 		PrintInfo("DEBUG", kForegroundGrey, format, args);
@@ -46,6 +46,7 @@ namespace log
 		printf(" [%s] %s: ", level, logger_name_.c_str());
 		vprintf(format, args);
 		printf("\n");
+		SetConsoleTextAttribute(handle, kForegroundWhite | kBackgroundBlack);
 	}
 	static void print_time()
 	{

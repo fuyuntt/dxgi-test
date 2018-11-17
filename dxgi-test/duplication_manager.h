@@ -41,8 +41,6 @@ namespace dupl
 		{
 			return reinterpret_cast<COLOR_BGRA*>(buffer) + p.y * width + p.x;
 		}
-
-
 	};
 
 

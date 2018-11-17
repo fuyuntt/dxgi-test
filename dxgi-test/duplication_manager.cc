@@ -40,7 +40,7 @@ namespace dupl
 		DXGI_ERROR_NOT_FOUND,
 		S_OK                                    // Terminate list with zero valued HRESULT
 	};
-
+	static log4c::Logger logger("DuplicationManager");
 	//
 	// Constructor sets up references / variables
 	//
@@ -59,10 +59,13 @@ namespace dupl
 		{
 			RELEASE(desk_dupl_);
 		}
-
 		if (d3d_device_)
 		{
 			RELEASE(d3d_device_);
+		}
+		if (d3d_device_context_)
+		{
+			RELEASE(d3d_device_context_);
 		}
 	}
 
@@ -71,6 +74,7 @@ namespace dupl
 	//
 	ReturnStatus DuplicationManager::Init(UINT output)
 	{
+		logger.Info("开始初始化桌面复制模块");
 		D3D11CreateDevice(
 			NULL,
 			D3D_DRIVER_TYPE_HARDWARE,
@@ -134,6 +138,7 @@ namespace dupl
 			return ProcessFailure(d3d_device_, L"Failed to get duplicate output in DUPLICATIONMANAGER", hr, CreateDuplicationExpectedErrors);
 		}
 		return SUCCESS;
+		logger.Info("桌面复制模块初始化完成");
 	}
 
 	//
@@ -143,7 +148,7 @@ namespace dupl
 	{
 		if (staging_surf_ != nullptr)
 		{
-			logger::error("请先释放之前的画面");
+			logger.Error("请先释放之前的画面");
 			return ERROR_UNEXPECTED;
 		}
 		IDXGIResource* desktop_resource = nullptr;

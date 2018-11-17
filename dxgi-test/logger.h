@@ -3,7 +3,7 @@
 
 #include <mutex>
 #include <string>
-namespace log
+namespace log4c
 {
 	class Logger
 	{

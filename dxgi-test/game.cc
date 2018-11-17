@@ -19,7 +19,7 @@ namespace game {
 		p->x = p->x < rect.right ? p->x + 1 : rect.left;
 		p->y = p->x == rect.left ? p->y + 1 : p->y;
 	}
-
+	static log4c::Logger logger("GameController");
 	Controller::Controller() : dupl_manager_(nullptr)
 	{
 	}
@@ -30,28 +30,53 @@ namespace game {
 		{
 			delete dupl_manager_;
 		}
+		if (keyboard_mouse_ != NULL)
+		{
+			delete keyboard_mouse_;
+		}
+		if (png_writer_ != NULL)
+		{
+			delete png_writer_;
+		}
 	}
 
-	ReturnStatus Controller::Init()
+	ReturnStatus Controller::Init(std::string picture_dir)
 	{
-		if (dupl_manager_ != NULL)
+		logger.Info("开始初始化游戏控制器模块");
+		ReturnStatus st = ERROR_EXPECTED;
+		while (st == ERROR_EXPECTED)
 		{
-			delete dupl_manager_;
+			if (dupl_manager_ != NULL)
+			{
+				delete dupl_manager_;
+			}
+			dupl_manager_ = new dupl::DuplicationManager();
+			st = dupl_manager_->Init(0);
+			if (st == ERROR_EXPECTED)
+			{
+				logger.Info("桌面复制初始化遇到可恢复异常，重新初始化");
+				Sleep(500);
+			}
 		}
-		dupl_manager_ = new dupl::DuplicationManager();
-		logger::info("开始初始化桌面复制");
-		ReturnStatus status = dupl_manager_->Init(0);
-		if (status == ERROR_EXPECTED)
+		if (st == ERROR_UNEXPECTED)
 		{
-			logger::info("初始化桌面复制遇到可恢复异常");
-			return status;
+			logger.Error("初始化桌面复制遇到不可恢复异常");
+			return st;
 		}
-		else if (status == ERROR_UNEXPECTED)
+		if (png_writer_ == NULL)
 		{
-			logger::error("初始化桌面复制遇到不可恢复异常");
-			return status;
+			png_writer_ = new png::PngWriter();
+			png_writer_->Init(picture_dir);
 		}
-		logger::info("桌面复制初始化成功");
+		if (keyboard_mouse_ == NULL)
+		{
+			keyboard_mouse_ = new km::KeyboardMouse();
+			if (!(keyboard_mouse_->Init()))
+			{
+				return ERROR_UNEXPECTED;
+			}
+		}
+		logger.Info("游戏控制器初始化成功");
 		return SUCCESS;
 	}
 
@@ -63,7 +88,7 @@ namespace game {
 	ReturnStatus Controller::StartGaming()
 	{
 		dupl::FrameData frame_data;
-		Context context = {NONE, false, 0};
+		Context context = {keyboard_mouse_, png_writer_, NONE, false, 0};
 		DWORD next_tick = GetTickCount() + COUNT_SECONDS * 1000;
 		DWORD count = 0;
 		while (true)
@@ -72,7 +97,7 @@ namespace game {
 			DWORD cur_tick = GetTickCount();
 			if (cur_tick >= next_tick)
 			{
-				logger::info("当前截屏帧率[%d]", count / COUNT_SECONDS);
+				logger.Debug("当前截屏帧率[%d]", count / COUNT_SECONDS);
 				next_tick = cur_tick + COUNT_SECONDS * 1000;
 				count = 0;
 			}

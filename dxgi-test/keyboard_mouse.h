@@ -31,7 +31,7 @@ namespace km
 			long count;
 		};
 		BlockingQueue<std::shared_ptr<Message>> message_queue_;
-		log::Logger logger_;
+		log4c::Logger logger_;
 		void DealMessage();
 	public:
 		KeyboardMouse() : message_queue_(), logger_("KeyboardMouse") {};
