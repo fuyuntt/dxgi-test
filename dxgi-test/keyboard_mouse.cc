@@ -7,27 +7,21 @@
 
 namespace km
 {
-	typedef int(__stdcall *OpenDeviceFunc)();
+	typedef int(__stdcall *OpenDeviceFunc)(char* SerialNumber);
 	typedef int(__stdcall *KeyDownFunc)(LPCSTR key);
 	typedef int(__stdcall *KeyUpFunc)(LPCSTR key);
-	typedef int(__stdcall *KeyPressFunc)(LPCSTR key, int count);
-	typedef int(__stdcall *LeftDownFunc)();
-	typedef int(__stdcall *LeftUpFunc)();
-	typedef int(__stdcall *LeftClickFunc)(int count);
-	typedef int(__stdcall *RightDownFunc)();
-	typedef int(__stdcall *RightUpFunc)();
-	typedef int(__stdcall *RightClickFunc)(int count);
+	typedef int(__stdcall *KeyPressFunc)(LPCSTR key);
+	typedef int(__stdcall* MouseDownFunc)(int mButton);
+	typedef int(__stdcall* MouseUpFunc)(int mButton);
+	typedef int(__stdcall* MouseClickFunc)(int mButton);
 	typedef int(__stdcall *WheelsMoveFunc)(int y);
 	static OpenDeviceFunc openDevice;
 	static KeyDownFunc keyDown;
 	static KeyUpFunc keyUp;
 	static KeyPressFunc keyPress;
-	static LeftDownFunc leftDown;
-	static LeftUpFunc leftUp;
-	static LeftClickFunc leftClick;
-	static RightDownFunc rightDown;
-	static RightUpFunc rightUp;
-	static RightClickFunc rightClick;
+	static MouseDownFunc mouseDown;
+	static MouseUpFunc mouseUp;
+	static MouseClickFunc mouseClick;
 	static WheelsMoveFunc wheelsMove;
 
 	bool KeyboardMouse::Init()
@@ -39,20 +33,17 @@ namespace km
 			logger_.Error("键鼠动态库载入失败");
 			return false;
 		}
-		openDevice = (OpenDeviceFunc)GetProcAddress(hDllInst, "OpenDevice");
-		keyDown = (KeyDownFunc)GetProcAddress(hDllInst, "KeyDown");
-		keyUp = (KeyUpFunc)GetProcAddress(hDllInst, "KeyUp");
-		keyPress = (KeyPressFunc)GetProcAddress(hDllInst, "KeyPress");
-		leftDown = (LeftDownFunc)GetProcAddress(hDllInst, "LeftDown");
-		leftUp = (LeftUpFunc)GetProcAddress(hDllInst, "LeftUp");
-		leftClick = (LeftClickFunc)GetProcAddress(hDllInst, "LeftClick");
-		rightDown = (RightDownFunc)GetProcAddress(hDllInst, "RightDown");
-		rightUp = (RightUpFunc)GetProcAddress(hDllInst, "RightUp");
-		rightClick = (RightClickFunc)GetProcAddress(hDllInst, "RightClick");
-		wheelsMove = (WheelsMoveFunc)GetProcAddress(hDllInst, "WheelsMove");
+		openDevice = (OpenDeviceFunc)GetProcAddress(hDllInst, "SelectDeviceBySerialNumber");
+		keyDown = (KeyDownFunc)GetProcAddress(hDllInst, "PressKeyByName");
+		keyUp = (KeyUpFunc)GetProcAddress(hDllInst, "ReleaseKeyByName");
+		keyPress = (KeyPressFunc)GetProcAddress(hDllInst, "PressAndReleaseKeyByName");
+		mouseDown = (MouseDownFunc)GetProcAddress(hDllInst, "PressMouseButton");
+		mouseUp = (MouseUpFunc)GetProcAddress(hDllInst, "ReleaseMouseButton");
+		mouseClick = (MouseClickFunc)GetProcAddress(hDllInst, "PressAndReleaseMouseButton");
+		wheelsMove = (WheelsMoveFunc)GetProcAddress(hDllInst, "MoveMouseWheel");
 		logger_.Info("键鼠动态库载入完成");
 		logger_.Info("开始初始化设备");
-		if (!openDevice())
+		if (!openDevice(NULL))
 		{
 			logger_.Error("初始化键鼠设备失败\n");
 			return false;
@@ -82,25 +73,25 @@ namespace km
 				keyUp(content.c_str());
 				break;
 			case KML_KEY_PRESS:
-				keyPress(content.c_str(), kml_msg->count);
+				keyPress(content.c_str());
 				break;
 			case KML_LEFT_DOWN:
-				leftDown();
+				mouseDown(1);
 				break;
 			case KML_LEFT_UP:
-				leftUp();
+				mouseUp(1);
 				break;
 			case KML_LEFT_CLICK:
-				leftClick(kml_msg->count);
+				mouseClick(1);
 				break;
 			case KML_RIGHT_DOWN:
-				rightDown();
+				mouseDown(3);
 				break;
 			case KML_RIGHT_UP:
-				rightUp();
+				mouseUp(3);
 				break;
 			case KML_RIGHT_CLICK:
-				rightClick(kml_msg->count);
+				mouseClick(3);
 				break;
 			case KML_WHEELS_MOVES:
 				wheelsMove(kml_msg->count);
